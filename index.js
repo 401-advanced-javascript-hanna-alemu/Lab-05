@@ -23,5 +23,6 @@ const doStuff = async () => {
   let newCategory = await categories.create(sampleCategory);
 
   let oneCategory = await categories.get(sampleCategory);
-  
+ 
+};
 doStuff();
