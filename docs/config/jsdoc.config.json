@@ -1,0 +1,9 @@
+"source": {
+    "include" : ["./"],
+//everything from this “include” path will be included into jsdoc
+    "exclude" : ["./node_modules"]
+  },
+  "opts": {
+    "destination": "./docs/",
+    "recurse": true
+  }

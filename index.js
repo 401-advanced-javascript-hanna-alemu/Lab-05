@@ -2,15 +2,26 @@
 
 const mongoose = require('mongoose');
 
-// Require your model
-
 // Mongoose Server URI
 const MONGOOSE_URI = 'mongodb+srv://hanna9:estifaman9@cluster0-s90so.mongodb.net/test?retryWrites=true&w=majority';
 
 // Connect
 mongoose.connect(MONGOOSE_URI, {useNewUrlParser: true,});
 
-// Do some work
+// Require your model
+const Categories = require('./models-singular/categories');
 
-// Disconnect
-mongoose.disconnect();
+
+const categories = new Categories();
+
+const doStuff = async () => {
+  const sampleCategory = {
+    name: 'Music',
+    description: 'My playlist',
+  };
+
+  let newCategory = await categories.create(sampleCategory);
+
+  let oneCategory = await categories.get(sampleCategory);
+  
+doStuff();

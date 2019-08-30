@@ -1,25 +1,110 @@
-// const Categories = require('../../models-modular/categories/categories.js');
-// // let categories = new Categories();
+'use strict';
 
-// const supergoose = require('../supergoose.js');
+//Hanna - supergoose is used to mock the database
+const supergoose = require('../../__tests__/supergoose');
 
-// describe('Categories Model (Modular)', () => {
+const categories = require('../../models-modular/categories/categories');
 
-//   // How will you handle both the happy path and edge cases in these tests?
+describe('Categories Model (Modular)', () => {
 
-//   it('can create() a new category', () => {
-//   });
+  // How will you handle both the happy path and edge cases in these tests?
 
-//   it('can get() a category', () => {
-//   });
+  it('can create() a new category', () => {
 
-//   it('can get() all categories', () => {
-//   });
+    const testCategories = {
+      name: 'Hanna',
+      description: 'student',
+    };
 
-//   it('can update() a category', () => {
-//   });
+    return categories.create(testCategories)
+      .then(savedCategories => {
+        Object.keys(testCategories).forEach(key => {
+          expect(savedCategories[key]).toEqual(testCategories[key]);
+        });
+      })
+      .catch(error => console.log(error));
+  });
 
-//   it('can delete() a category', () => {
-//   });
+  it('can get() a category', () => {
+    const categories = new Categories();
+    const testCategories = {
+      name: 'movies',
+      description: 'List of movies',
+    };
 
-// });
+    return categories.create(testCategories)
+      .then(savedCategories => {
+        return categories.get(savedCategories._id);
+      })
+      .then(resolvedCategories => {
+        Object.keys(testCategories).forEach(key => {
+          expect(resolvedCategories[key]).toEqual(testCategories[key]);
+        });
+      })
+      .catch(error => console.log(error));
+  });
+
+  it('can get() all categories', () => {
+    const categories = new Categories();
+    const testCategories = {
+      name: 'movies',
+      description: 'List of movies',
+    };
+
+    return categories.create(testCategories)
+      .then(savedCategories => {
+        return categories.get(savedCategories._id);
+      })
+      .then(resolvedCategories => {
+        Object.keys(testCategories).forEach(key => {
+          expect(resolvedCategories[key]).toEqual(testCategories[key]);
+        });
+      })
+      .catch(error => console.log(error));
+  });
+
+  it('can update() a category', () => {
+    let categories = new Categories();
+    let testcategories = {
+      name:'movies',
+      description: 'List of movies',
+    };
+    let updateCategories = {
+      name:'Films',
+      description:'List of films',
+    };
+    return categories.create(testcategories)
+      .then( record => {
+        let firstRecord = categories.database.filter( object => {
+          return object._id === record._id;
+        });
+        expect(firstRecord[0].name).toEqual('movies');
+        return categories.update(record._id, updateCategories);
+      })
+      .then(record => {
+        let newRecord = categories.database.filter( object => {
+          return object._id === record._id;
+        });
+        expect(newRecord[0].name).toEqual('Films');
+      });
+  });
+
+  it('can delete() a category', () => {
+    let categories = new Categories();
+    let obj = {
+      name: 'Movies',
+      description: 'List of movies',
+    };
+    return categories.create(obj)
+      .then(() => {
+        return categories.delete( obj._id);
+      })
+      .then(_id => {
+        categories.database.forEach( record => {
+          expect(record._id === obj._id).toEqual(false);
+        });
+      });
+
+  });
+
+});
