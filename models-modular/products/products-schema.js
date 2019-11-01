@@ -2,21 +2,20 @@
 
 const mongoose = require('mongoose');
 
+// What fields and constraints do we want?
 const products = mongoose.Schema({
-  name : { 
-    type : String,
-    required : 'true'
+  name:{
+    type: String,
+    required: true,
   },
-  category : {
-    type : String,
-    required : 'true'
+  description: {
+    type: String,
   },
-  price : {
-    type : Number,
+  quantity:{
+    type: Number,
   },
-  available : {
-    type : Boolean,
-  }
 });
 
-module.exports = mongoose.model( 'products', products );
+// Do we need to run any lifecycle hooks/middleware?
+
+module.exports = mongoose.model('products ', products);

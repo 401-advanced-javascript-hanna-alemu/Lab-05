@@ -17,6 +17,20 @@ class Model {
    * @returns {count:#,results:[{*}]} | {*}
    */
   get(_id) {
+    if(_id){
+      console.log('got in get method and check id');
+
+      if(this.schema.findOne({_id})){
+        // console.log('this is the id obj it found',schema.findOne({_id}));
+        return this.schema.findOne({_id});
+      }
+    }else{
+      return this.schema.find()
+        .then(result=>{
+          return {count: result.length, results: result};
+        });
+    }
+    return Promise.reject(new Error('Invalid Id'));
 
   }
 
@@ -26,6 +40,10 @@ class Model {
    * @returns {*}
    */
   create(record) {
+    // Call the appropriate mongoose method to create a new record
+    const newRecord = new this.schema(record);
+    //this will return a resolved promise into a new product
+    return newRecord.save();
 
   }
 
@@ -36,6 +54,7 @@ class Model {
    * @returns {*}
    */
   update(_id, record) {
+    return this.schema.findByIdAndUpdate(_id,record, {new:true});
 
   }
 
@@ -45,6 +64,7 @@ class Model {
    * @returns {*}
    */
   delete(_id) {
+    return this.schema.findByIdAndDelete(_id);
 
   }
 

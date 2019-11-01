@@ -1,114 +1,110 @@
 'use strict';
 
-//Hanna - supergoose is used to mock the database
 const supergoose = require('../supergoose.js');
 
-const Products = require('../../models-singular/products.js');
-
+const Products = require('../../models-singular/products');
 let products = new Products();
 
-
-
-describe('products Model (Singular)', () => {
+describe('Products Model (Singular)', () => {
 
   // How will you handle both the happy path and edge cases in these tests?
 
   it('can create() a new product', () => {
-
-    const testproducts = {
-      name: 'Hanna',
-      description: 'student',
+    const testProducts = {
+      name: 'apples',
+      description: 'There will be some apples here',
+      quantity: 10,
     };
+    return products.create(testProducts)
 
-    return products.create(testproducts)
-      .then(savedproducts => {
-        Object.keys(testproducts).forEach(key => {
-          expect(savedproducts[key]).toEqual(testproducts[key]);
+      .then(savedProducts=>{
+        Object.keys(testProducts).forEach(key=>{
+          expect(savedProducts[key]).toEqual(testProducts[key]);
         });
-      })
-      .catch(error => console.log(error));
+      });
+
+  //     .catch(err=>console.log(err,'There is something wrong with the create test'));
   });
 
   it('can get() a product', () => {
-    const products = new Products();
-    const testproducts = {
-      name: 'movies',
-      description: 'List of movies',
+    const testProducts = {
+      name: 'apples',
+      description: 'There will be some apples here',
+      quantity: 10,
     };
+    return products.create(testProducts)
 
-    return products.create(testproducts)
-      .then(savedproducts => {
-        return products.get(savedproducts._id);
+      .then(savedProducts=>{
+        return products.get(savedProducts._id);
       })
-      .then(resolvedproducts => {
-        Object.keys(testproducts).forEach(key => {
-          expect(resolvedproducts[key]).toEqual(testproducts[key]);
+
+      .then(resolvedProducts=>{
+        Object.keys(testProducts).forEach(key=>{
+          expect(resolvedProducts[key]).toEqual(testProducts[key]);
         });
-      })
-      .catch(error => console.log(error));
+      });
   });
 
-  it('can get() all products', () => {
-    const products = new Products();
-    const testproducts = {
-      name: 'movies',
-      description: 'List of movies',
+  it('can get() all Products', () => {
+    const testProducts = {
+      name: 'apples',
+      description: 'There will be some apples here',
+      quantity: 10,
     };
+    return products.create(testProducts)
 
-    return products.create(testproducts)
-      .then(savedproducts => {
-        return products.get(savedproducts._id);
+      .then((savedProducts)=>{
+        return products.get();
       })
-      .then(resolvedproducts => {
-        Object.keys(testproducts).forEach(key => {
-          expect(resolvedproducts[key]).toEqual(testproducts[key]);
-        });
-      })
-      .catch(error => console.log(error));
+
+      .then(resolvedProducts=>{
+        expect(resolvedProducts.count).toEqual(3);
+      });
   });
 
   it('can update() a product', () => {
-    let products = new Products();
-    let testproducts = {
-      name:'movies',
-      description: 'List of movies',
+    const testProducts = {
+      name: 'apples',
+      description: 'There will be some apples here',
+      quantity: 10,
     };
-    let updateproducts = {
-      name:'Films',
-      description:'List of films',
-    };
-    return products.create(testproducts)
-      .then( record => {
-        let firstRecord = products.database.filter( object => {
-          return object._id === record._id;
-        });
-        expect(firstRecord[0].name).toEqual('movies');
-        return products.update(record._id, updateproducts);
+    return products.create(testProducts)
+
+      .then(savedProducts=>{
+        // console.log('got in savedProducts', products.update({id: savedProducts._id},{name: 'Pear'}));
+        return products.update(savedProducts._id,{name: 'Banana'});
       })
-      .then(record => {
-        let newRecord = products.database.filter( object => {
-          return object._id === record._id;
-        });
-        expect(newRecord[0].name).toEqual('Films');
+
+      .then((record) => {
+        return products.get(record._id);
+      })
+
+      .then(updatedProducts=>{
+        // console.log('got in updated last then test', updatedProducts.find({name:'Peter'}));
+        expect (updatedProducts.name).toEqual('Banana');
       });
   });
 
-  it('can delete() a product', () => {
-    let products = new Products();
-    let obj = {
-      name: 'Movies',
-      description: 'List of movies',
-    };
-    return products.create(obj)
-      .then(() => {
-        return products.delete( obj._id);
-      })
-      .then(_id => {
-        products.database.forEach( record => {
-          expect(record._id === obj._id).toEqual(false);
-        });
-      });
 
+  it('can delete() a product', () => {
+    const testProducts = {
+      name: 'apples',
+      description: 'There will be some apples here',
+      quantity: 10,
+    };
+    return products.create(testProducts)
+
+      .then(savedProducts=>{
+        return products.delete(savedProducts._id);
+      })
+
+      .then(productsAfterDelete=>{
+        return products.get();
+      })
+
+      .then(gotProducts=>{
+        expect(gotProducts.count).toEqual(4);
+      });
   });
 
 });

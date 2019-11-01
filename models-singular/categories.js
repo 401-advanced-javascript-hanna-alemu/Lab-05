@@ -1,14 +1,9 @@
 'use strict';
 
-// Where is our schema defined????
-
-//Hanna - the schema is defined in the categories-schema file
-
-// How do we get it in here so we can run methods on it???
-
-//Hanna we can get it by requiring it to import it
-
-const categoriesModel = require('./categories-schema.js');
+// Where is our schema defined?
+// How do we get it in here so we can run methods on it?
+//import the schema of categories here
+const categoriesSchema = require('./categories-schema');
 
 class Categories {
 
@@ -16,29 +11,52 @@ class Categories {
   }
 
   get(_id) {
-    // Hanna - Call the appropriate mongoose method to get if the id is valid
-    if(_id) {
-      return categoriesModel.findOne({_id,});
-    }
-    return Promise.reject(new Error('--Invalid ID ---'));
+    console.log('got in get method');
+    // Call the appropriate mongoose method to get
+    // one or more records
+    // If 1, return it as a plain object
+    // If 2, return it as an object like this:
+    // { count: ##, results: [{}, {}] }
+    if(_id){
+      console.log('got in get method and check id');
 
+      if(categoriesSchema.findOne({_id})){
+        // console.log('this is the id obj it found',categoriesSchema.findOne({_id}));
+        return categoriesSchema.findOne({_id});
+      }
+    }else{
+      return categoriesSchema.find()
+        .then(result=>{
+          return {count: result.length, results: result};
+        });
+    }
+    // return Promise.reject(new Error('Invalid Id'));
   }
 
   create(record) {
-    // Hanna - Call the appropriate mongoose method to create a new record and save it
-    const newRecord = new categoriesModel(record);
+    // Call the appropriate mongoose method to create a new record
+    const newRecord = new categoriesSchema(record);
+    //this will return a resolved promise into a new category
     return newRecord.save();
   }
 
-  update(_id, record) {
-    // Hanna - Call the appropriate mongoose method to update a record
-    return categoriesModel.findByIdAndUpdate(_id, record, {new: true,});
+  update(_id,record) {
+    // Call the appropriate mongoose method to update a record
+    // console.log('This is in update funtion', _id,updateData);
+    // console.log('This is  after updated', categoriesSchema.findByIdAndUpdate({id: _id},updateData));
+    // const updateObj = categoriesSchema.findOne({id:_id});
+    // return updateObj
+    //   // .then(updateObj=>{
+    //   //   return updateObj.update(record);
+    //   // })
+    // // console.log(updateObj);
+    //   .then()
+    return categoriesSchema.findByIdAndUpdate(_id,record, {new:true});
   }
 
   delete(_id) {
-    // Hanna - Call the appropriate mongoose method to delete a record
-    return categoriesModel.findByIdAndDelete(_id);
-
+    // Call the appropriate mongoose method to delete a record
+    return categoriesSchema.findByIdAndDelete(_id);
   }
 
 }

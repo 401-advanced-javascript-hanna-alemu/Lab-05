@@ -1,14 +1,9 @@
 'use strict';
 
-// Where is our schema defined????
-
-//Hanna - the schema is defined in the products-schema file
-
-// How do we get it in here so we can run methods on it???
-
-//Hanna we can get it by requiring it to import it
-
-const productsModel = require('./products-schema.js');
+// Where is our schema defined?
+// How do we get it in here so we can run methods on it?
+//import the schema of categories here
+const productsSchema = require('./products-schema');
 
 class Products {
 
@@ -16,29 +11,45 @@ class Products {
   }
 
   get(_id) {
-    // Hanna - Call the appropriate mongoose method to get if the id is valid
-    if(_id) {
-      return productsModel.findOne({_id,});
-    }
-    return Promise.reject(new Error('--Invalid ID ---'));
+    console.log('got in get method');
+    // Call the appropriate mongoose method to get
+    // one or more records
+    // If 1, return it as a plain object
+    // If 2, return it as an object like this:
+    // { count: ##, results: [{}, {}] }
+    if(_id){
+      console.log('got in get method and check id');
 
+      if(productsSchema.findOne({_id})){
+        // console.log('this is the id obj it found',productsSchema.findOne({_id}));
+        return productsSchema.findOne({_id});
+      }
+    }else{
+      return productsSchema.find()
+        .then(result=>{
+          return {count: result.length, results: result};
+        });
+    }
+    return Promise.reject(new Error('Invalid Id'));
   }
 
   create(record) {
-    // Hanna - Call the appropriate mongoose method to create a new record and save it
-    const newRecord = new ProductsModel(record);
+    // Call the appropriate mongoose method to create a new record
+    const newRecord = new productsSchema(record);
+    //this will return a resolved promise into a new product
     return newRecord.save();
   }
 
-  update(_id, record) {
-    // Hanna - Call the appropriate mongoose method to update a record
-    return productsModel.findByIdAndUpdate(_id, record, {new: true,});
+  update(_id,record) {
+    // Call the appropriate mongoose method to update a record
+    // console.log('This is in update funtion', _id,updateData);
+    // console.log('This is  after updated', productsSchema.findByIdAndUpdate({id: _id},updateData));
+    return productsSchema.findByIdAndUpdate(_id,record, {new:true});
   }
 
   delete(_id) {
-    // Hanna - Call the appropriate mongoose method to delete a record
-    return productsModel.findByIdAndDelete(_id);
-
+    // Call the appropriate mongoose method to delete a record
+    return productsSchema.findByIdAndDelete(_id);
   }
 
 }
